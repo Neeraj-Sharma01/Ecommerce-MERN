@@ -73,3 +73,52 @@ export const getProductsById = async (req,res) => {
             })
     }
 }
+
+export const updateProduct = async(req,res) => {
+    try {
+        const {id} = req.params;
+        const {title,
+                description,
+                price,
+                category,
+                brand,
+                stock,
+                images,} = req.body;
+        const product = await Product.findById(id);
+
+        if(!product){
+            return res.status(404).json({
+                 success: false,
+                 message: "Product not found",
+            })
+        }
+
+        product.title = title ?? product.title;
+        product.description = description ?? product.description;
+        product.price = price ?? product.price;
+        product.category = category ?? product.category;
+        product.brand = brand ?? product.brand;
+        product.stock = stock ?? product.stock;
+        product.images = images ?? product.images;
+
+        const updatedProduct = await product.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Product updated successfully",
+            product: updatedProduct,
+            });
+    } catch (error) {
+        if (error.name === "CastError") {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid product ID",
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+}
