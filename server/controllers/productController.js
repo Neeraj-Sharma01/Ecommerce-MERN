@@ -37,7 +37,10 @@ catch (error) {
 
 export const getProducts = async (req,res) => {
     try {
-            const {search,category} = req.query;
+            const {search,category,page=1,limit=8} = req.query;
+            const pageNumber = Number(req.query.page);
+            const limitNumber = Number(req.query.limit);
+            const skip = (pageNumber - 1) * limitNumber;
             let filter = {}
             if(search){
                 filter.$or = [
@@ -59,12 +62,19 @@ export const getProducts = async (req,res) => {
                 filter.category = category
             }
 
-        const products = await Product.find(filter).sort({createdAt: -1,});
-        
+        const products = await Product.find(filter).sort({createdAt: -1,}).skip(skip).limit(limitNumber);
+        const totalProducts = await Product.countDocuments(filter);
+        const totalPages = Math.ceil(
+            totalProducts / limitNumber
+            );
+
         res.status(200).json({
-      success: true,
-      count: products.length,
-      products,
+       success: true,
+        currentPage: pageNumber,
+        totalPages,
+        totalProducts,
+        count: products.length,
+        products,
     });
     } catch (error) {
          res.status(500).json({
