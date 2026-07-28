@@ -122,3 +122,39 @@ export const updateProduct = async(req,res) => {
     });
   }
 }
+
+export const deleteProduct = async(req,res) => {
+    try {
+        
+        const {id} = req.params;
+    
+        const product = await Product.findById(id);
+    
+        if(!product){
+            return res.statsu(404).json({
+                success: false,
+                message: "Product not found"
+            })
+        }
+    
+        await product.deleteOne();
+         res.status(200).json({
+            success:true,
+            message:"Product deleted Successfully"
+         })
+    } catch (error) {
+        if (error.name === "CastError") {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid product ID",
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+    }
+
+
+}
