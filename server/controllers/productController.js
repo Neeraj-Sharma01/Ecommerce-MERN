@@ -37,7 +37,7 @@ catch (error) {
 
 export const getProducts = async (req,res) => {
     try {
-            const {search,category,page=1,limit=8} = req.query;
+            const {search,category,page=1,limit=8,sort} = req.query;
             const pageNumber = Number(req.query.page);
             const limitNumber = Number(req.query.limit);
             const skip = (pageNumber - 1) * limitNumber;
@@ -62,7 +62,27 @@ export const getProducts = async (req,res) => {
                 filter.category = category
             }
 
-        const products = await Product.find(filter).sort({createdAt: -1,}).skip(skip).limit(limitNumber);
+            let sortOption = {
+                createdAt: -1,
+            }
+
+            if (sort === "price_asc") {
+            sortOption = { price: 1 };
+            }
+
+            if (sort === "price_desc") {
+            sortOption = { price: -1 };
+            }
+
+            if (sort === "rating") {
+            sortOption = { rating: -1 };
+            }
+
+            if (sort === "newest") {
+            sortOption = { createdAt: -1 };
+            }
+
+        const products = await Product.find(filter).sort(sortOption).skip(skip).limit(limitNumber);
         const totalProducts = await Product.countDocuments(filter);
         const totalPages = Math.ceil(
             totalProducts / limitNumber
