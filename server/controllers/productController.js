@@ -37,7 +37,26 @@ catch (error) {
 
 export const getProducts = async (req,res) => {
     try {
-        const products = await Product.find().sort({createdAt: -1,});
+            const {search} = req.query;
+            let filter = {}
+            if(search){
+                filter.$or = [
+                    {
+                        title:{
+                            $regex: search,
+                            $options:"i",
+                        }
+                    },
+                    {
+                        brand:{
+                            $regex: search,
+                            $options:"i",
+                        }
+                    }
+                ]    
+            }
+
+        const products = await Product.find(filter).sort({createdAt: -1,});
         
         res.status(200).json({
       success: true,
