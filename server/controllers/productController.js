@@ -37,7 +37,7 @@ catch (error) {
 
 export const getProducts = async (req,res) => {
     try {
-            const {search} = req.query;
+            const {search,category} = req.query;
             let filter = {}
             if(search){
                 filter.$or = [
@@ -54,6 +54,9 @@ export const getProducts = async (req,res) => {
                         }
                     }
                 ]    
+            }
+            if(category){
+                filter.category = category
             }
 
         const products = await Product.find(filter).sort({createdAt: -1,});
