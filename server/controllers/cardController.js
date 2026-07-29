@@ -147,3 +147,56 @@ export const updateCartItem = async(req,res) => {
             });
     }
 }
+
+export const removeCartItem = async(req,res) => {
+    try {
+        const{productId} = req.params;
+
+        const cart = await Cart.findOne({
+            user:req.user._id
+        })
+
+        if (!cart) {
+            return res.status(404).json({
+                success: false,
+                message: "Cart not found",
+            });
+        }
+
+        const itemExists = cart.items.some(
+            (item) => item.product.toString() === productId
+            );
+
+         if (!itemExists) {
+            return res.status(404).json({
+                success: false,
+                message: "Product not found in cart",
+            });
+            }
+
+            cart.items = cart.items.filter((item)=> item.product.toString() !== productId);
+
+            await cart.save();
+
+            await cart.populate("items.product");
+
+            let subtotal = 0;
+
+            cart.items.forEach((item) => {
+                subtotal += item.product.price * item.quantity
+            })
+
+            res.status(200).json({
+                success:true,
+                message:"Item remove from cart",
+                items:cart.items,
+                subtotal,
+            })
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+            });
+    }
+}
