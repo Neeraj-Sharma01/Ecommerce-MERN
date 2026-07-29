@@ -37,7 +37,7 @@ catch (error) {
 
 export const getProducts = async (req,res) => {
     try {
-            const {search,category,page=1,limit=8,sort} = req.query;
+            const {search,category,page=1,limit=8,sort,minPrice,maxPrice} = req.query;
             const pageNumber = Number(req.query.page);
             const limitNumber = Number(req.query.limit);
             const skip = (pageNumber - 1) * limitNumber;
@@ -60,6 +60,16 @@ export const getProducts = async (req,res) => {
             }
             if(category){
                 filter.category = category
+            }
+            if(minPrice || maxPrice)
+            {
+                filter.price = {}
+                if(minPrice){
+                     filter.price.$gte = Number(minPrice);
+                }
+                if(maxPrice){
+                    filter.price.$lte = Number(maxPrice);
+                }
             }
 
             let sortOption = {
