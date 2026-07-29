@@ -55,3 +55,38 @@ export const addToCart = async(req,res) => {
     });
     }
 }
+
+export const getcart = async(req,res) => {
+    try {
+        const cart = await Cart.findOne({
+            user:req.user._id
+        }).populate("items.product");
+
+         if (!cart) {
+            return res.status(200).json({
+                success: true,
+                items: [],
+                totalItems: 0,
+                subtotal: 0,
+            });
+        }
+
+        let subtotal = 0;
+
+        cart.items.forEach((item) => {
+            subtotal += item.product.price * item.quantity
+        })
+
+        res.status(200).json({
+      success: true,
+      items: cart.items,
+      totalItems: cart.items.length,
+      subtotal,
+    });
+    } catch (error) {
+        res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+    }
+}
