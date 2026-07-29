@@ -15,6 +15,16 @@ export const createOrder = async(req,res) => {
             });
          }
 
+        for (const item of cart.items) {
+
+        if (item.product.stock < item.quantity) {
+            return res.status(400).json({
+            success: false,
+            message: `Not enough stock for ${item.product.title}`,
+            });
+        }
+         }
+
         res.status(200).json({
             success: true,
             message: "Cart validated successfully",
