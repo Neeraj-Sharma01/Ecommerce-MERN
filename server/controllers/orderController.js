@@ -64,3 +64,23 @@ export const createOrder = async(req,res) => {
             });
     }
 }
+
+export const getUserOrders = async(req,res) => {
+    try {
+            const orders = await Order.find({
+                user:req.user._id,
+            }).populate("items.product").sort({createdAt:-1})
+
+            res.status(200).json({
+                success:true,
+                count:order.length,
+                orders
+            })
+
+    } catch (error) {
+        res.status(500).json({
+        success: false,
+        message: error.message,
+        });
+    }
+}
