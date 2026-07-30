@@ -41,6 +41,16 @@ export const createOrder = async(req,res) => {
             totalAmount
          })
 
+         for(const item of cart.items)
+         {
+            item.product.stock -= item.quantity;
+            await item.product.save();
+         }
+
+         cart.items = [];
+
+         await cart.save();
+
         res.status(200).json({
             success: true,
             message: "Order created successfully",
