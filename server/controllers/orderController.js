@@ -117,3 +117,48 @@ export const getOrderById = async(req,res) => {
                 });
     }
 }
+
+export const updateOrderStatus = async(req,res) => {
+    try {
+        const {id} = req.params;
+        const{status} = req.body;
+        const order = await Order.findById(id);
+        if(!order){
+            return res.status(404).json({
+                success: false,
+                message: "Order not found",
+            });
+        }
+        const allowedStatus = [
+            "Pending",
+            "Processing",
+            "Shipped",
+            "Delivered",
+            "Cancelled",
+        ];
+        if (!allowedStatus.includes(status)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid order status",
+            });
+            }
+
+        order.status = status;
+
+        await order.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Order status updated",
+            order,
+            });
+
+
+    } catch (error) {
+         res.status(500).json({
+            success: false,
+            message: error.message,
+            });
+
+    }
+}
