@@ -38,7 +38,8 @@ export const createOrder = async(req,res) => {
          const order = await Order.create({
             user:req.user._id,
             items:orderItems,
-            totalAmount
+            totalAmount,
+            paymentMethod,
          })
 
          for(const item of cart.items)
