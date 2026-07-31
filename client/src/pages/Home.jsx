@@ -1,5 +1,6 @@
 import {useEffect,useState} from 'react';
 import api from "../api/axios.js";
+import { Link } from "react-router-dom";
 
 const Home = () => {
   const [products,setProducts] = useState([]);
@@ -25,7 +26,9 @@ const Home = () => {
     <h1>All Products</h1>
      {products.map((product) => (
         <div key={product._id}>
+        <Link to={`/product/${product._id}`}>
           <h3>{product.title}</h3>
+        </Link>
 
           <p>₹ {product.price}</p>
 
