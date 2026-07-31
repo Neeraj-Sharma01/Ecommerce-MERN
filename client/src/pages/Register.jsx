@@ -1,5 +1,5 @@
 import { useState } from "react"
-import api from "../src/api/axios.js"
+import api from "../api/axios.js"
 
 const Register = () => {
     const[formData,setFormData] = useState({
