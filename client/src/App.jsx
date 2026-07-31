@@ -7,11 +7,13 @@ import Cart from "../pages/Cart";
 import Checkout from "../pages/Checkout";
 import ProductDetails from "../pages/ProductDetails";
 import MyOrders from "../pages/MyOrders";
+import Navbar from "../components/Navbar";
 
 function App() {
 
   return (
     <BrowserRouter>
+    <Navbar/>
       <Routes>
         <Route path="/" element={<Home/>}/>
 
